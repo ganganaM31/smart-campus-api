@@ -27,13 +27,6 @@ RESTful API for managing campus rooms and IoT sensors using JAX-RS with Jersey.
 - `GET /api/v1/sensors/{sensorId}/readings` - Get readings
 - `POST /api/v1/sensors/{sensorId}/readings` - Add reading
 
-## Technology Stack
-- Java 11+
-- JAX-RS (Jakarta)
-- Jersey 3.1.1
-- Grizzly HTTP Server
-- GSON
-
 ## Build & Run
 
 ```bash
@@ -72,42 +65,10 @@ curl -X POST http://localhost:8080/api/v1/sensors/TEMP-001/readings -H "Content-
 curl -X DELETE http://localhost:8080/api/v1/rooms/LIB-301
 ```
 
-## Features
-✓ RESTful resource-based architecture
-✓ Sub-resource locators for nested endpoints
-✓ Custom exception handling (409, 422, 403, 500)
-✓ Request/response logging
-✓ Thread-safe in-memory storage
-✓ JSON request/response handling
-
 ## Error Handling
 - **409 Conflict:** Room deletion with active sensors
 - **422 Unprocessable Entity:** Invalid foreign key
 - **403 Forbidden:** Sensor unavailable
 - **500 Internal Error:** Unexpected exceptions
 
-## Answers to Conceptual Questions
 
-### JAX-RS Resource Lifecycle
-Resources are instantiated per-request by default. This ensures thread safety. Shared data uses Singleton pattern with ConcurrentHashMap.
-
-### DELETE Idempotency
-Yes, DELETE is idempotent. First request deletes (200 OK), subsequent requests return 404 (room doesn't exist). Server state doesn't change on retries.
-
-### Room Listing Implications
-Full objects use more bandwidth but better UX. IDs only reduce bandwidth but need extra requests. Our API returns full objects.
-
-### @Consumes Annotation
-If client sends wrong Content-Type, JAX-RS returns 415 Unsupported Media Type before handler method executes.
-
-### @QueryParam vs Path Parameter
-@QueryParam is better for filtering (supports multiple criteria, standard REST convention). Path parameters represent resource hierarchy.
-
-### Sub-Resource Pattern Benefits
-Separates concerns, improves modularity, easier testing, better maintainability, cleaner code organization.
-
-### Exception Mapping Security
-Stack traces expose code structure and vulnerabilities. We use GenericExceptionMapper to return generic errors only.
-
-### Filters vs Manual Logging
-Filters separate cross-cutting concerns, follow DRY principle, guarantee consistency, no code duplication in every method.
