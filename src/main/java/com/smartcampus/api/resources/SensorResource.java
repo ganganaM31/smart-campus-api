@@ -72,6 +72,54 @@ public class SensorResource {
         return Response.ok(gson.toJson(sensor)).build();
     }
     
+    @PUT
+    @Path("/{sensorId}/status")
+    @Consumes(MediaType.APPLICATION_JSON)
+    @Produces(MediaType.APPLICATION_JSON)
+    public Response updateSensorStatus(@PathParam("sensorId") String sensorId, String body) {
+
+        try {
+            Sensor sensor = dataStore.getSensor(sensorId);
+
+            if (sensor == null) {
+                return Response.status(404)
+                        .entity("{\"error\": \"Sensor not found\"}")
+                        .build();
+            }
+
+            if (body == null || body.isEmpty()) {
+                return Response.status(400)
+                        .entity("{\"error\": \"Empty request body\"}")
+                        .build();
+            }
+
+            JsonObject json = gson.fromJson(body, JsonObject.class);
+
+            if (json == null || !json.has("status")) {
+                return Response.status(400)
+                        .entity("{\"error\": \"Status field required\"}")
+                        .build();
+            }
+
+            String newStatus = json.get("status").getAsString();
+
+            sensor.setStatus(newStatus);
+
+            JsonObject response = new JsonObject();
+            response.addProperty("message", "Sensor status updated");
+            response.addProperty("status", newStatus);
+
+            return Response.ok(response.toString()).build();
+
+        } catch (Exception e) {
+            e.printStackTrace(); 
+
+            return Response.status(500)
+                    .entity("{\"error\": \"Internal error in update status\"}")
+                    .build();
+        }
+    }
+    
     @Path("/{sensorId}/readings")
     public SensorReadingResource getReadings(@PathParam("sensorId") String sensorId) {
         Sensor sensor = dataStore.getSensor(sensorId);

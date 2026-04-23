@@ -16,7 +16,6 @@ public class DiscoveryResource {
         JsonObject discovery = new JsonObject();
         discovery.addProperty("version", "1.0.0");
         discovery.addProperty("title", "Smart Campus Sensor & Room Management API");
-        discovery.addProperty("contact", "facilities@university.edu");
         
         JsonObject resources = new JsonObject();
         resources.addProperty("rooms", "/api/v1/rooms");
